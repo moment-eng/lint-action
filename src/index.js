@@ -19,6 +19,7 @@ async function runAction() {
 	const gitEmail = core.getInput("git_email", { required: true });
 	const commitMessage = core.getInput("commit_message", { required: true });
 	const checkName = core.getInput("check_name", { required: true });
+	const createCheck = core.getInput("create_check", { required: false });
 	const isPullRequest =
 		context.eventName === "pull_request" || context.eventName === "pull_request_target";
 
@@ -120,13 +121,15 @@ async function runAction() {
 		headSha = git.getHeadSha();
 	}
 
-	core.startGroup("Create check runs with commit annotations");
-	await Promise.all(
-		checks.map(({ lintCheckName, lintResult, summary }) =>
-			createCheck(lintCheckName, headSha, context, lintResult, summary),
-		),
-	);
-	core.endGroup();
+    if (createCheck === "true") {
+        core.startGroup("Create check runs with commit annotations");
+        await Promise.all(
+            checks.map(({ lintCheckName, lintResult, summary }) =>
+                createCheck(lintCheckName, headSha, context, lintResult, summary),
+            ),
+        );
+        core.endGroup();
+    }
 
 	if (hasFailures && !continueOnError) {
 		core.setFailed("Linting failures detected. See check runs with annotations for details.");
