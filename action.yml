@@ -31,6 +31,10 @@ inputs:
     description: 'Template for the name of the check run. The "${linter}" and "${dir}" variables can be used to insert the name and directory of the linter.'
     required: false
     default: "${linter}"
+  create_check:
+      description: 'Whether or not to create a github check'
+      default: true
+      required: false
 
   # CSS
 
